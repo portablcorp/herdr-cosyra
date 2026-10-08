@@ -1,0 +1,27 @@
+#!/bin/sh
+# Runs `cosyra herdr <args>` for the Herdr plugin.
+#
+# Optional overrides live in "$HERDR_PLUGIN_CONFIG_DIR/env". The file is
+# sourced as shell, so keep it to KEY=VALUE lines you wrote yourself:
+#   COSYRA_BIN      path to the cosyra CLI (default: cosyra on PATH)
+set -eu
+
+env_file="${HERDR_PLUGIN_CONFIG_DIR:-}/env"
+if [ -n "${HERDR_PLUGIN_CONFIG_DIR:-}" ] && [ -f "$env_file" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "$env_file"
+  set +a
+fi
+
+cosyra_bin="${COSYRA_BIN:-cosyra}"
+if ! command -v "$cosyra_bin" >/dev/null 2>&1; then
+  message="Cosyra CLI not found. Install it, then run: cosyra auth login"
+  echo "$message" >&2
+  if [ -n "${HERDR_BIN_PATH:-}" ]; then
+    "$HERDR_BIN_PATH" notification show "$message" >/dev/null 2>&1 || true
+  fi
+  exit 127
+fi
+
+exec "$cosyra_bin" herdr "$@"

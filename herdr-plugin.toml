@@ -1,0 +1,23 @@
+id = "cosyra"
+name = "Cosyra"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Open your Cosyra cloud workspace in Herdr: one tab per Cosyra terminal, attached over SSH."
+platforms = ["macos", "linux"]
+
+[[startup]]
+command = ["bin/cosyra-herdr", "sync", "--if-open"]
+
+[[actions]]
+id = "open"
+title = "Open Cosyra workspace"
+command = ["bin/cosyra-herdr", "sync", "--focus"]
+
+[[actions]]
+id = "refresh"
+title = "Refresh Cosyra terminals"
+command = ["bin/cosyra-herdr", "sync"]
+
+[[events]]
+on = "workspace.focused"
+command = ["bin/cosyra-herdr", "sync", "--if-open"]
